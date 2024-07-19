@@ -1,29 +1,29 @@
 package main
 
 import (
-	"fmt"
+	handlers "gin-todo-app/Handlers"
 	"gin-todo-app/Models"
-	"gin-todo-app/Handlers"
-	"github.com/jinzhu/gorm"
-	"github.com/jinzhu/gorm/dialects/mysql"
 	"log"
 
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-func main (){
-	db, err := gorm.Open("mysql", "root:password@/gin-todo-app?charset=utf8&parseTime=True&loc=Local")
+func main() {
+	db, err := gorm.Open("mysql", "root:password@/todo?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	db.AutoMigrate(&models.Todo{})
-
-	r:= gin.Default()
-	r.GET("/todos", handlers.GetTodos)
-	r.POST("/todos", handlers.CreateTodo)
-	r.GET("/todos/:id", handlers.GetTodo)
-	r.PUT("/todos/:id", handlers.UpdateTodo)
-	r.DELETE("/todos/:id", handlers.DeleteTodo)
-	r.Run(":8080")
 	
+	db.AutoMigrate(&Models.Todo{})
+
+	r := gin.Default()
+	r.GET("/todos", handlers.GetTodos(db))
+	r.POST("/todos", handlers.CreateTodo(db))
+	r.PUT("/todos/:id", handlers.UpdateTodo(db))
+	r.DELETE("/todos/:id", handlers.DeleteTodo(db))
+
+	r.Run(":8080")
 }
