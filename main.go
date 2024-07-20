@@ -5,18 +5,22 @@ import (
 	"gin-todo-app/Models"
 	"log"
 
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func main() {
-	db, err := gorm.Open("mysql", "root:password@/todo?charset=utf8&parseTime=True&loc=Local")
+	db, err := gorm.Open("mysql", "root:password@tcp(127.0.0.1:3306)/todo?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	
+	//check whether db is empty or not
+	fmt.Println("db is connected")
+
 	db.AutoMigrate(&Models.Todo{})
 
 	r := gin.Default()
